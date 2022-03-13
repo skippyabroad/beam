@@ -8,29 +8,12 @@ import apache_beam as beam
 
 job = 'sample-transactions-tfm'
 src = 'gs://cloud-samples-data/bigquery/sample-transactions/transactions.csv'
-pfx = '/results/outputs/'
-fle = 'sample-transactions-total-amount-by-date.csv'
+pfx = '/output/'
+fle = 'results.csv'
 
-def preprocessing(fields):
-    fields = fields.split(",")
-    header = "label"
-    for i in range(0, 784):
-        header += (",pixel" + str(i))
-    label_list_str = "["
-    label_list = []
-    for i in range(0,10) :
-        if fields[0] == str(i) :
-            label_list_str+=str(i)
-        else :
-            label_list_str+=("0")
-        if i!=9 :
-            label_list_str+=","
-    label_list_str+="],"
-    for i in range(1,len(fields)) :
-        label_list_str+=fields[i]
-        if i!=len(fields)-1:
-            label_list_str+=","
-    yield label_list_str
+def tfm():
+    #
+    yield ''
 
 
 def run(project, bucket, region, result_output) :
@@ -54,7 +37,7 @@ def run(project, bucket, region, result_output) :
                     | "Read from GCS" >> beam.io.ReadFromText(src)
                     # FlatMap is like :class:ParDo except it takes a callable to specify the transformation.
                     # The callable must return an iterable for each element of the input 
-                    | job >> beam.FlatMap(preprocessing)
+                    | job >> beam.FlatMap(tfm)
                     )
   
     (ptransform
